@@ -15,30 +15,31 @@ export TIME_STAMP=$(date +"%Y-%m-%dT%H:%M:00Z")
 
 echo "--- Download previous git sha"
 .buildkite/scripts/steps/code_coverage/reporting/downloadPrevSha.sh
-previousSha=$(cat downloaded_previous.txt)
 
 echo "--- Upload new git sha"
 .buildkite/scripts/steps/code_coverage/reporting/uploadPrevSha.sh
 
 .buildkite/scripts/bootstrap.sh
 
-echo "--- Download coverage artifacts"
-
 collectRan() {
   for x in $(ls target/ran_files/*); do
     ran=("${ran[@]}" "$(cat $x)")
   done
+  echo "--- Collected Ran files: ${ran[*]}"
 }
 
 uniqueifyRanConfigs() {
   local xs=("$@")
   uniqRanConfigs=($(printf "%s\n" "${xs[@]}" | sort -u | tr '\n' ' '))
+  echo "--- Uniq Ran files: ${uniqRanConfigs[*]}"
 }
 
 fetchArtifacts() {
+  echo "--- Fetch coverage artifacts"
+
   local xs=("$@")
   for x in "${xs[@]}"; do
-    buildkite-agent artifact download target/kibana-coverage/${x}/* .
+    buildkite-agent artifact download "target/kibana-coverage/${x}/*" .
   done
 }
 
@@ -53,6 +54,8 @@ archiveReports() {
 }
 
 modularize() {
+  buildkite-agent artifact download target/ran_files/* .
+
   if [ -d target/ran_files ]; then
     collectRan
     uniqueifyRanConfigs "${ran[@]}"
@@ -60,22 +63,27 @@ modularize() {
     .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
     archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
+    .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
+
+    #    echo "--- Ingest results to Kibana stats cluster"
+    #    .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
+    #      ${BUILDKITE_BUILD_NUMBER} ${BUILDKITE_BUILD_URL} ${previousSha} \
+    #      'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
   else
     echo "--- Found zero configs that ran"
   fi
 }
 
 modularize
-echo "### unique ran configs: ${uniqRanConfigs[@]}"
+echo "### unique ran configs: ${uniqRanConfigs[*]}"
 
-echo "--- collect VCS Info"
-.buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
+# TODO-TRE: Modularize next
+#echo "--- Jest: Reset file paths prefix, merge coverage files, and generate the final combined report"
+## Jest: Reset file paths prefix to Kibana Dir of final worker
+#replacePaths "$KIBANA_DIR/target/kibana-coverage/jest" "CC_REPLACEMENT_ANCHOR" "$KIBANA_DIR"
+#yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 
-echo "--- Jest: Reset file paths prefix, merge coverage files, and generate the final combined report"
-# Jest: Reset file paths prefix to Kibana Dir of final worker
-replacePaths "$KIBANA_DIR/target/kibana-coverage/jest" "CC_REPLACEMENT_ANCHOR" "$KIBANA_DIR"
-yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
-
+# TODO-Tre: I'll eventually need to modularize this too
 #echo "--- Functional: Reset file paths prefix, merge coverage files, and generate the final combined report"
 # Functional: Reset file paths prefix to Kibana Dir of final worker
 #set +e
@@ -84,8 +92,3 @@ yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 #splitCoverage target/kibana-coverage/functional
 #splitMerge
 #set -e
-
-echo "--- Ingest results to Kibana stats cluster"
-.buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
-  ${BUILDKITE_BUILD_NUMBER} ${BUILDKITE_BUILD_URL} ${previousSha} \
-  'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt'
