@@ -42,21 +42,30 @@ fetchArtifacts() {
   done
 }
 
-entryPoint() {
+archiveReports() {
+  echo "--- Archive and upload combined reports"
+
+  local xs=("$@")
+  for x in "${xs[@]}"; do
+    collectAndUpload "target/kibana-coverage/jest/kibana-${x}-coverage.tar.gz" \
+      "target/kibana-coverage/${x}-combined"
+  done
+}
+
+modularize() {
   if [ -d target/ran_files ]; then
     collectRan
     uniqueifyRanConfigs "${ran[@]}"
     fetchArtifacts "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
+    archiveReports "${uniqRanConfigs[@]}"
   else
     echo "--- Found zero configs that ran"
   fi
 }
 
-entryPoint
+modularize
 echo "### unique ran configs: ${uniqRanConfigs[@]}"
-
-
 
 echo "--- collect VCS Info"
 .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
@@ -74,12 +83,6 @@ yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 #splitCoverage target/kibana-coverage/functional
 #splitMerge
 #set -e
-
-echo "--- Archive and upload combined reports"
-collectAndUpload target/kibana-coverage/jest/kibana-jest-coverage.tar.gz \
-  target/kibana-coverage/jest-combined
-#collectAndUpload target/kibana-coverage/functional/kibana-functional-coverage.tar.gz \
-#  target/kibana-coverage/functional-combined
 
 echo "--- Upload coverage static site"
 .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh
