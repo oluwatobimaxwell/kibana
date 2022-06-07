@@ -59,6 +59,7 @@ modularize() {
     fetchArtifacts "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
     archiveReports "${uniqRanConfigs[@]}"
+    .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
   else
     echo "--- Found zero configs that ran"
   fi
@@ -83,9 +84,6 @@ yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 #splitCoverage target/kibana-coverage/functional
 #splitMerge
 #set -e
-
-echo "--- Upload coverage static site"
-.buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh
 
 echo "--- Ingest results to Kibana stats cluster"
 .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
