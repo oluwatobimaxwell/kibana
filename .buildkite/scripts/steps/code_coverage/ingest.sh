@@ -53,6 +53,12 @@ archiveReports() {
   done
 }
 
+finalReplace() {
+  echo "--- Jest: Reset file paths prefix, merge coverage files, and generate the final combined report"
+  replacePaths "$KIBANA_DIR/target/kibana-coverage/jest" "CC_REPLACEMENT_ANCHOR" "$KIBANA_DIR"
+  yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
+}
+
 modularize() {
   buildkite-agent artifact download target/ran_files/* .
 
@@ -64,6 +70,7 @@ modularize() {
     archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
+    finalReplace
 
     #    echo "--- Ingest results to Kibana stats cluster"
     #    .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
@@ -77,12 +84,6 @@ modularize() {
 
 modularize
 echo "### unique ran configs: ${uniqRanConfigs[*]}"
-
-# TODO-TRE: Modularize next
-#echo "--- Jest: Reset file paths prefix, merge coverage files, and generate the final combined report"
-## Jest: Reset file paths prefix to Kibana Dir of final worker
-#replacePaths "$KIBANA_DIR/target/kibana-coverage/jest" "CC_REPLACEMENT_ANCHOR" "$KIBANA_DIR"
-#yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 
 # TODO-Tre: I'll eventually need to modularize this too
 #echo "--- Functional: Reset file paths prefix, merge coverage files, and generate the final combined report"
