@@ -13,9 +13,6 @@ export PASS_FROM_VAULT="$(retry 5 5 vault read -field=password secret/kibana-iss
 export HOST_FROM_VAULT="$(retry 5 5 vault read -field=host secret/kibana-issues/prod/coverage/elasticsearch)"
 export TIME_STAMP=$(date +"%Y-%m-%dT%H:%M:00Z")
 
-echo "--- Print KIBANA_DIR"
-echo "### KIBANA_DIR: $KIBANA_DIR"
-
 echo "--- Download previous git sha"
 .buildkite/scripts/steps/code_coverage/reporting/downloadPrevSha.sh
 previousSha=$(cat downloaded_previous.txt)
@@ -26,13 +23,40 @@ echo "--- Upload new git sha"
 .buildkite/scripts/bootstrap.sh
 
 echo "--- Download coverage artifacts"
-buildkite-agent artifact download target/kibana-coverage/jest/* .
-#buildkite-agent artifact download target/kibana-coverage/functional/* .
-buildkite-agent artifact download target/ran_files/* .
-ls -l target/ran_files/* || echo "### No ran-files found"
 
-echo "--- process HTML Links"
-.buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh
+collectRan() {
+  for x in $(ls target/ran_files/*); do
+    ran=("${ran[@]}" "$(cat $x)")
+  done
+}
+
+uniqueifyRanConfigs() {
+  local xs=("$@")
+  uniqRanConfigs=($(printf "%s\n" "${xs[@]}" | sort -u | tr '\n' ' '))
+}
+
+fetchArtifacts() {
+  local xs=("$@")
+  for x in "${xs[@]}"; do
+    buildkite-agent artifact download target/kibana-coverage/${x}/* .
+  done
+}
+
+entryPoint() {
+  if [ -d target/ran_files ]; then
+    collectRan
+    uniqueifyRanConfigs "${ran[@]}"
+    fetchArtifacts "${uniqRanConfigs[@]}"
+    .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
+  else
+    echo "--- Found zero configs that ran"
+  fi
+}
+
+entryPoint
+echo "### unique ran configs: ${uniqRanConfigs[@]}"
+
+
 
 echo "--- collect VCS Info"
 .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
