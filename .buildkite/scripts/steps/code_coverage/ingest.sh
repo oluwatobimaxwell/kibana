@@ -22,9 +22,9 @@ echo "--- Upload new git sha"
 .buildkite/scripts/bootstrap.sh
 
 collectRan() {
-  for x in $(find target/ran_files -maxdepth 1 -type f -name '*.txt'); do
+  while read -r x; do
     ran=("${ran[@]}" "$(cat $x)")
-  done
+  done <<<"$(find target/ran_files -maxdepth 1 -type f -name '*.txt')"
   echo "--- Collected Ran files: ${ran[*]}"
 }
 
@@ -70,7 +70,8 @@ modularize() {
     #      ${BUILDKITE_BUILD_NUMBER} ${BUILDKITE_BUILD_URL} ${previousSha} \
     #      'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
   else
-    echo "--- Found zero configs that ran"
+    echo "--- Found zero configs that ran, cancelling ingestion."
+    exit 11
   fi
 }
 
