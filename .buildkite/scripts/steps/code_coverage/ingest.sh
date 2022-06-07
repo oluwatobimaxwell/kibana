@@ -4,7 +4,6 @@ set -euo pipefail
 
 source .buildkite/scripts/common/util.sh
 source .buildkite/scripts/steps/code_coverage/util.sh
-source .buildkite/scripts/steps/code_coverage/merge.sh
 
 export CODE_COVERAGE=1
 echo "--- Reading Kibana stats cluster creds from vault"
@@ -53,11 +52,25 @@ archiveReports() {
   done
 }
 
-finalReplace() {
+finalizeJest() {
   echo "--- Jest: Reset file paths prefix, merge coverage files, and generate the final combined report"
   replacePaths "$KIBANA_DIR/target/kibana-coverage/jest" "CC_REPLACEMENT_ANCHOR" "$KIBANA_DIR"
   yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
   # TODO-TRE: If we ever turn ftr_configs back on, I'll need to handle them here as well
+}
+
+finalizeFunctional() {
+  #  local xs=("$@")
+  # TODO-Tre: I'll eventually need to modularize this too
+  # TODO-Tre: I'll need to source .buildkite/scripts/steps/code_coverage/merge.sh to use the functions below
+  #echo "--- Functional: Reset file paths prefix, merge coverage files, and generate the final combined report"
+  # Functional: Reset file paths prefix to Kibana Dir of final worker
+  #set +e
+  #sed -ie "s|CC_REPLACEMENT_ANCHOR|${KIBANA_DIR}|g" target/kibana-coverage/functional/*.json
+  #echo "--- Begin Split and Merge for Functional"
+  #splitCoverage target/kibana-coverage/functional
+  #splitMerge
+  #set -e
 }
 
 modularize() {
@@ -71,7 +84,9 @@ modularize() {
     archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
-    finalReplace
+    # TODO-Tre: I'll eventually need to modularize the finalization of jest and functional later, if needed.
+    finalizeJest
+    #    finalizeFunctional "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
       ${BUILDKITE_BUILD_NUMBER} ${BUILDKITE_BUILD_URL} ${previousSha} \
       'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
@@ -83,13 +98,3 @@ modularize() {
 
 modularize
 echo "### unique ran configs: ${uniqRanConfigs[*]}"
-
-# TODO-Tre: I'll eventually need to modularize this too
-#echo "--- Functional: Reset file paths prefix, merge coverage files, and generate the final combined report"
-# Functional: Reset file paths prefix to Kibana Dir of final worker
-#set +e
-#sed -ie "s|CC_REPLACEMENT_ANCHOR|${KIBANA_DIR}|g" target/kibana-coverage/functional/*.json
-#echo "--- Begin Split and Merge for Functional"
-#splitCoverage target/kibana-coverage/functional
-#splitMerge
-#set -e
