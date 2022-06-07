@@ -2,8 +2,7 @@
 
 set -euo pipefail
 
-echo "### Ingesting Code Coverage"
-echo ""
+xs=("$@")
 
 COVERAGE_JOB_NAME=$1
 export COVERAGE_JOB_NAME
@@ -47,6 +46,7 @@ CI_STATS_DISABLED=true node scripts/generate_team_assignments.js \
 #done
 #wait
 
+echo "--- Ingest results to Kibana stats cluster"
 echo "### Ingesting coverage for JEST"
 COVERAGE_SUMMARY_FILE="target/kibana-coverage/jest-combined/coverage-summary.json"
 

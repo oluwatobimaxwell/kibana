@@ -57,6 +57,7 @@ finalReplace() {
   echo "--- Jest: Reset file paths prefix, merge coverage files, and generate the final combined report"
   replacePaths "$KIBANA_DIR/target/kibana-coverage/jest" "CC_REPLACEMENT_ANCHOR" "$KIBANA_DIR"
   yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
+  # TODO-TRE: If we ever turn ftr_configs back on, I'll need to handle them here as well
 }
 
 modularize() {
@@ -71,11 +72,9 @@ modularize() {
     .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
     finalReplace
-
-    #    echo "--- Ingest results to Kibana stats cluster"
-    #    .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
-    #      ${BUILDKITE_BUILD_NUMBER} ${BUILDKITE_BUILD_URL} ${previousSha} \
-    #      'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
+    .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
+      ${BUILDKITE_BUILD_NUMBER} ${BUILDKITE_BUILD_URL} ${previousSha} \
+      'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
   else
     echo "--- Found zero configs that ran, cancelling ingestion."
     exit 11
