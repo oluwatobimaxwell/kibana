@@ -22,7 +22,7 @@ echo "--- Upload new git sha"
 .buildkite/scripts/bootstrap.sh
 
 collectRan() {
-  for x in $(ls target/ran_files/*); do
+  for x in $(find target/ran_files -maxdepth 1 -type f -name '*.txt'); do
     ran=("${ran[@]}" "$(cat $x)")
   done
   echo "--- Collected Ran files: ${ran[*]}"
