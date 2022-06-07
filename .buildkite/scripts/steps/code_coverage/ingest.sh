@@ -48,8 +48,8 @@ archiveReports() {
 
   local xs=("$@")
   for x in "${xs[@]}"; do
-    collectAndUpload "target/kibana-coverage/jest/kibana-${x}-coverage.tar.gz" \
-      "target/kibana-coverage/${x}-combined"
+    echo "### Collect and Upload for: ${x}"
+    collectAndUpload "target/kibana-coverage/${x}/kibana-${x}-coverage.tar.gz" "target/kibana-coverage/${x}-combined"
   done
 }
 
