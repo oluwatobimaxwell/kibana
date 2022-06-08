@@ -38,7 +38,8 @@ collectRan() {
 
 uniqueifyRanConfigs() {
   local xs=("$@")
-  uniqRanConfigs=($(printf "%s\n" "${xs[@]}" | sort -u | tr '\n' ' '))
+  xss=$(printf "%s\n" "${xs[@]}" | sort -u | tr '\n' ' ' | xargs)
+  uniqRanConfigs=("$xss")
   echo "--- Uniq Ran files: ${uniqRanConfigs[*]}"
 }
 
