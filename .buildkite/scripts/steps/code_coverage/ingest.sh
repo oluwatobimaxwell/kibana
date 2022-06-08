@@ -27,9 +27,12 @@ echo "--- Upload new git sha"
 .buildkite/scripts/bootstrap.sh
 
 collectRan() {
+  buildkite-agent artifact download target/ran_files/* .
+
   while read -r x; do
     ran=("${ran[@]}" "$(cat "$x")")
   done <<<"$(find target/ran_files -maxdepth 1 -type f -name '*.txt')"
+
   echo "--- Collected Ran files: ${ran[*]}"
 }
 
@@ -81,17 +84,15 @@ mergeAll() {
 }
 
 modularize() {
-  buildkite-agent artifact download target/ran_files/* .
-
   if [ -d target/ran_files ]; then
     collectRan
     uniqueifyRanConfigs "${ran[@]}"
     fetchArtifacts "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
-    archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
     mergeAll "${uniqRanConfigs[@]}"
+    archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
       "${BUILDKITE_BUILD_NUMBER}" "${BUILDKITE_BUILD_URL}" "${PREVIOUS_SHA}" \
       'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
