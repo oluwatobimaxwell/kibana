@@ -38,7 +38,7 @@ collectRan() {
 
 uniqueifyRanConfigs() {
   local xs=("$@")
-  xss=$(printf "%s\n" "${xs[@]}" | sort -u | tr '\n' ' ' | xargs) # xargs trims whitespace
+  local xss=$(printf "%s\n" "${xs[@]}" | sort -u | tr '\n' ' ' | xargs) # xargs trims whitespace
   uniqRanConfigs=("$xss")
   echo "--- Uniq Ran files: ${uniqRanConfigs[*]}"
 }
@@ -85,8 +85,8 @@ mergeAll() {
 }
 
 modularize() {
+  collectRan
   if [ -d target/ran_files ]; then
-    collectRan
     uniqueifyRanConfigs "${ran[@]}"
     fetchArtifacts "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
