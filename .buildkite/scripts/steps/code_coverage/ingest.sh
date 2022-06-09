@@ -60,8 +60,8 @@ archiveReports() {
   for x in "${xs[@]}"; do
     echo "### Collect and Upload for: ${x}"
 #    fileHeads "target/file-heads-archive-reports-for-${x}.txt" "target/kibana-coverage/${x}"
-    dirListing "target/dir-listing-${x}-combined-during-archiveReports.txt" target/kibana-coverage/${x}-combined
-    dirListing "target/dir-listing-${x}-during-archiveReports.txt" target/kibana-coverage/${x}
+#    dirListing "target/dir-listing-${x}-combined-during-archiveReports.txt" target/kibana-coverage/${x}-combined
+#    dirListing "target/dir-listing-${x}-during-archiveReports.txt" target/kibana-coverage/${x}
     collectAndUpload "target/kibana-coverage/${x}/kibana-${x}-coverage.tar.gz" "target/kibana-coverage/${x}-combined"
   done
 }
