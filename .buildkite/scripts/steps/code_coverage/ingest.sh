@@ -58,8 +58,7 @@ archiveReports() {
   local xs=("$@")
   for x in "${xs[@]}"; do
     echo "### Collect and Upload for: ${x}"
-    echo "--- MAYBE THERE IS A BROKEN PATH"
-    fileHeads "target/file-heads-arhive-reports-for-${x}.txt" "target/kibana-coverage/${x}"
+    fileHeads "target/file-heads-archive-reports-for-${x}.txt" "target/kibana-coverage/${x}"
     collectAndUpload "target/kibana-coverage/${x}/kibana-${x}-coverage.tar.gz" "target/kibana-coverage/${x}-combined"
   done
 }
@@ -89,11 +88,11 @@ modularize() {
   if [ -d target/ran_files ]; then
     uniqueifyRanConfigs "${ran[@]}"
     fetchArtifacts "${uniqRanConfigs[@]}"
+    mergeAll "${uniqRanConfigs[@]}"
+    archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/prokLinks.sh "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/uploadStaticSite.sh "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/collectVcsInfo.sh
-    mergeAll "${uniqRanConfigs[@]}"
-    archiveReports "${uniqRanConfigs[@]}"
     .buildkite/scripts/steps/code_coverage/reporting/ingestData.sh 'elastic+kibana+code-coverage' \
       "${BUILDKITE_BUILD_NUMBER}" "${BUILDKITE_BUILD_URL}" "${PREVIOUS_SHA}" \
       'src/dev/code_coverage/ingest_coverage/team_assignment/team_assignments.txt' "${uniqRanConfigs[@]}"
