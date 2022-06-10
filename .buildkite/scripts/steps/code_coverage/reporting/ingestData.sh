@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-xs=("$@")
-
 COVERAGE_JOB_NAME=$1
 export COVERAGE_JOB_NAME
 echo "### debug COVERAGE_JOB_NAME: ${COVERAGE_JOB_NAME}"
@@ -30,21 +28,25 @@ echo "### debug TEAM_ASSIGN_PATH: ${TEAM_ASSIGN_PATH}"
 
 BUFFER_SIZE=500
 export BUFFER_SIZE
-echo "### debug BUFFER_SIZE: ${BUFFER_SIZE}"
 
-echo "--- Generate Team Assignments"
-CI_STATS_DISABLED=true node scripts/generate_team_assignments.js \
-  --verbose --src '.github/CODEOWNERS' --dest "$TEAM_ASSIGN_PATH"
+ingestModular() {
+  local xs=("$@")
 
-echo "--- Ingest results to Kibana stats cluster"
-for x in "${xs[@]}"; do
-  echo "### Ingesting coverage for ${x}"
-  COVERAGE_SUMMARY_FILE="target/kibana-coverage/${x}-combined/coverage-summary.json"
+  echo "--- Generate Team Assignments"
+  CI_STATS_DISABLED=true node scripts/generate_team_assignments.js \
+    --verbose --src '.github/CODEOWNERS' --dest "$TEAM_ASSIGN_PATH"
 
-  CI_STATS_DISABLED=true node scripts/ingest_coverage.js --path "${COVERAGE_SUMMARY_FILE}" \
-    --vcsInfoPath ./VCS_INFO.txt --teamAssignmentsPath "$TEAM_ASSIGN_PATH" &
-done
-wait
+  echo "--- Ingest results to Kibana stats cluster"
+  for x in "${xs[@]}"; do
+    echo "--- Ingesting coverage for ${x}"
 
-echo "---  Ingesting Code Coverage - Complete"
-echo ""
+    COVERAGE_SUMMARY_FILE="target/kibana-coverage/${x}-combined/coverage-summary.json"
+
+    CI_STATS_DISABLED=true node scripts/ingest_coverage.js --path "${COVERAGE_SUMMARY_FILE}" \
+      --vcsInfoPath ./VCS_INFO.txt --teamAssignmentsPath "$TEAM_ASSIGN_PATH" &
+  done
+  wait
+
+  echo "---  Ingesting Code Coverage - Complete"
+  echo ""
+}
