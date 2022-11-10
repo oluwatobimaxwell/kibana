@@ -13,9 +13,10 @@ import useObservable from 'react-use/lib/useObservable';
 import { Observable } from 'rxjs';
 import Url from 'url';
 import { ChromeNavLink } from '../..';
-import { ElasticMark } from './elastic_mark';
+// import { ElasticMark } from './elastic_mark';
 import { HttpStart } from '../../../http';
 import { LoadingIndicator } from '../loading_indicator';
+import { CSTLogoName } from '../../../cst/components/logo_name';
 
 function findClosestAnchor(element: HTMLElement): HTMLAnchorElement | void {
   let current = element;
@@ -100,7 +101,8 @@ export function HeaderLogo({ href, navigateToApp, loadingCount$, ...observables 
       })}
     >
       <LoadingIndicator loadingCount$={loadingCount$!} />
-      <ElasticMark className="chrHeaderLogo__mark" aria-hidden={true} />
+      {/* <ElasticMark className="chrHeaderLogo__mark" aria-hidden={true} /> */}
+      <CSTLogoName />
     </a>
   );
 }
