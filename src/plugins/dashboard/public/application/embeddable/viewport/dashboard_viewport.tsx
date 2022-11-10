@@ -19,6 +19,7 @@ import {
   LazyControlsCallout,
 } from '../../../../../controls/public';
 import { withSuspense } from '../../../services/presentation_util';
+import { MagnetDataDashboard } from '../../cst_apps/magnet_data';
 
 export interface DashboardViewportProps {
   container: DashboardContainer;
@@ -146,6 +147,16 @@ export class DashboardViewport extends React.Component<DashboardViewportProps, S
             </div>
           )}
           {this.state.controlGroupReady && <DashboardGrid container={container} />}
+          {/* CST Custom Dashboard Element for Magnet Data */}
+          <MagnetDataDashboard
+            {...this.props}
+            isReadonlyMode={
+              !this.props.container.getInput().dashboardCapabilities?.showWriteControls
+            }
+            isEditMode={isEditMode}
+            uiSettings={this.context.services.uiSettings}
+            http={this.context.services.http}
+          />
         </div>
       </>
     );
