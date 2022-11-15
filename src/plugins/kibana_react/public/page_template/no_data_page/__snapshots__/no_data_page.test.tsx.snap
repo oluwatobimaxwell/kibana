@@ -119,7 +119,7 @@ exports[`NoDataPage render 1`] = `
       ]
     }
     docsLink="test"
-    pageTitle="Welcome to Elastic Elastic!"
+    pageTitle="Welcome to CST Analytics Elastic!"
     solution="Elastic"
   />
   <EuiSpacer

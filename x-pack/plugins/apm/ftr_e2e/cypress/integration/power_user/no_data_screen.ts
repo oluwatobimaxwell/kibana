@@ -35,11 +35,11 @@ describe('No data screen', () => {
 
     it('shows no data screen instead of service inventory', () => {
       cy.visit('/app/apm/');
-      cy.contains('Welcome to Elastic Observability!');
+      cy.contains('Welcome to CST Analytics Observability!');
     });
     it('shows settings page', () => {
       cy.visit('/app/apm/settings');
-      cy.contains('Welcome to Elastic Observability!').should('not.exist');
+      cy.contains('Welcome to CST Analytics Observability!').should('not.exist');
       cy.get('h1').contains('Settings');
     });
 

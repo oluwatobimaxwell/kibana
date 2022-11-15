@@ -41,6 +41,7 @@ import type { LogoutReason } from '../../../common/types';
 import type { ConfigType } from '../../config';
 import type { LoginFormProps } from './components';
 import { DisabledLoginForm, LoginForm, LoginFormMessageType } from './components';
+import { CSTLogoIcon } from '../../cst/components/logo';
 
 interface Props {
   http: HttpStart;
@@ -128,13 +129,14 @@ export class LoginPage extends Component<Props, State> {
           <div className={contentHeaderClasses}>
             <EuiSpacer size="xxl" />
             <span className="loginWelcome__logo">
-              <EuiIcon type="logoElastic" size="xxl" />
+              {/* <EuiIcon type="logoElastic" size="xxl" /> */}
+              <CSTLogoIcon size="medium" />
             </span>
             <EuiTitle size="m" className="loginWelcome__title">
               <h1>
                 <FormattedMessage
                   id="xpack.security.loginPage.welcomeTitle"
-                  defaultMessage="Welcome to Elastic"
+                  defaultMessage="Welcome to CST Analytics"
                 />
               </h1>
             </EuiTitle>

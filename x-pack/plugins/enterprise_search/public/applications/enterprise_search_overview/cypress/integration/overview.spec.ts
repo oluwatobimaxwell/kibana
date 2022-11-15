@@ -15,7 +15,7 @@ context('Enterprise Search Overview', () => {
 
   it('should contain product cards', () => {
     cy.visit(overviewPath);
-    cy.contains('Welcome to Elastic Enterprise Search');
+    cy.contains('Welcome to CST Analytics Enterprise Search');
 
     cy.get('[data-test-subj="appSearchProductCard"]')
       .contains('Open App Search')

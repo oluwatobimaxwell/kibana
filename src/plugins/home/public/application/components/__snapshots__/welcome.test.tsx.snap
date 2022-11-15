@@ -29,7 +29,7 @@ exports[`should render a Welcome screen 1`] = `
         >
           <h1>
             <FormattedMessage
-              defaultMessage="Welcome to Elastic"
+              defaultMessage="Welcome to CST Analytics"
               id="home.welcomeTitle"
               values={Object {}}
             />

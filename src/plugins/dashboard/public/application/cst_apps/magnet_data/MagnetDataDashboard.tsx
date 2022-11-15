@@ -9,7 +9,7 @@
 /* eslint-disable no-console */
 
 import { HttpSetup, IUiSettingsClient } from 'kibana/public';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { MagnetDataTable } from './MagnetDataTable';
 
@@ -22,25 +22,26 @@ interface Props {
 }
 
 export const MagnetDataDashboard: FC<Props> = ({ container, http }) => {
-  const margnetElement = useMemo<any>(() => {
-    let element = null;
+  const margnetElements = useMemo<any[]>(() => {
+    let elements: any[] = [];
     const panels = container?.getInput()?.panels || {};
     Object.values(panels).forEach((child: any) => {
       if (child?.explicitInput?.savedVis?.params?.markdown === '[cst-magnet-data]') {
-        element = child;
+        elements.push(child);
       }
     });
-    return element;
+    return elements;
   }, [container]);
 
-  const content = useMemo(() => {
-    if (!margnetElement) return <div />;
+  const getContent = useCallback((margnetElement: any) => {
+    if (margnetElements?.length === 0) return <div />;
     return <MagnetDataTable http={http} container={container} margnetElement={margnetElement} />;
-  }, [margnetElement, http, container]);
+  }, [http, container]);
 
   useEffect(() => {
     try {
       const interval = setInterval(() => {
+        margnetElements.forEach((margnetElement) => {
         const panelId = margnetElement?.explicitInput?.id;
         if (panelId) {
           const el = document.querySelector(`[data-test-embeddable-id="${panelId}"]`);
@@ -51,15 +52,16 @@ export const MagnetDataDashboard: FC<Props> = ({ container, http }) => {
           }
           if (el) {
             const panel = el.querySelector('.visualization.markdownVis');
-            ReactDOM.render(content, panel);
+            ReactDOM.render(getContent(margnetElement), panel);
             clearInterval(interval);
           }
         }
+      });
       }, 1000);
     } catch (e) {
       console.log(e?.message);
     }
-  }, [content, margnetElement]);
+  }, [getContent, margnetElements]);
 
   return <div />;
 };

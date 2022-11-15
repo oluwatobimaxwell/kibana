@@ -6,12 +6,17 @@
  * Side Public License, v 1.
  */
 /* eslint-disable @typescript-eslint/no-shadow */
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { HttpSetup } from 'kibana/public';
 import isEqual from 'lodash/isEqual';
 import { TableColumnType, LooseObject } from './types';
+import QueryBuilder from './QueryBuilder';
 
 export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
+  
+  const artifactListQuery = useRef<QueryBuilder>(new QueryBuilder()).current;
+  const artifactDataQuery = useRef<QueryBuilder>(new QueryBuilder()).current;
+
   const [data, setData] = useState<LooseObject[]>([]);
   const [artifacts, setArtifacts] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,13 +72,8 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
   const getTableData = useCallback(async () => {
     if (artifactId && http) {
       setLoading(true);
-      const body = {
-        queryString: globalQuery?.query,
-        startDate: globalQuery?.timeRange?.from,
-        endDate: globalQuery?.timeRange?.to,
-      };
-      const data: LooseObject[] = await http.post(`/api/magnet_data/artifact_data/${artifactId}`, {
-        body: JSON.stringify(body),
+      const data: LooseObject[] = await http.post(`/api/magnet_data/artifact_data`, {
+        body: JSON.stringify(artifactDataQuery.build()),
       });
       setData(data);
       setPagination((prevPagination: any) => ({
@@ -89,27 +89,39 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
   const getArtifacts = useCallback(async () => {
     if (http) {
       setLoading(true);
-      const data = await http.get(`/api/magnet_data/artifacts`);
+      const data = await http.post(`/api/magnet_data/artifacts`, {
+        body: JSON.stringify(artifactListQuery.build()),
+      });
       setArtifacts(data as string[]);
       setLoading(false);
     }
   }, [http]);
 
   const getGlobalQuery = useCallback(() => {
-    const { query, timeRange } = container?.input;
-    const { from, to } = timeRange;
-    const _globalQuery = {
-      query: query.query,
-      timeRange: {
-        from,
-        to,
-      },
-    };
 
+    artifactListQuery.reset();
+    artifactDataQuery.reset();
+
+    const { query, timeRange, filters } = container?.input;
+
+    if (filters.length > 0) {
+      artifactListQuery.addFilters(filters);
+      artifactDataQuery.addFilters(filters);
+    }
+    if (query) {
+      artifactListQuery.addQueryString(query.query);
+      artifactDataQuery.addQueryString(query.query);
+    }
+    if (timeRange) {
+      artifactListQuery.addTimeRange(timeRange);
+      artifactDataQuery.addTimeRange(timeRange);
+    }
+
+    const _globalQuery = artifactDataQuery.build();
     if (!isEqual(_globalQuery, globalQuery)) {
       setGlobalQuery(_globalQuery);
     }
-  }, [container?.input, globalQuery]);
+  }, [container, globalQuery]);
 
   const trackClickEvent = useCallback(() => setTimeout(getGlobalQuery, 500), [getGlobalQuery]);
 
@@ -126,13 +138,14 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
 
   useEffect(() => {
     if (artifactId) {
+      artifactDataQuery.addArtifactName(artifactId);
       getTableData();
     }
   }, [artifactId, getTableData]);
 
   useEffect(() => {
     getArtifacts();
-  }, [getArtifacts]);
+  }, [globalQuery, getArtifacts]);
 
   const displayedColumns = useMemo(() => columns.filter((col) => !col.hidden), [columns]);
 
@@ -172,3 +185,4 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     setArtifactId,
   };
 };
+

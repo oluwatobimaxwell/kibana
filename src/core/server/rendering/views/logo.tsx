@@ -7,8 +7,15 @@
  */
 
 import React, { FC } from 'react';
+import { CSTLogoIcon } from '../../cst/components/logo';
 
-export const Logo: FC = () => (
+interface Props {
+  size?: string;
+}
+
+export const Logo: FC<Props> = ({ size = "large" }) => <CSTLogoIcon size={size} />;
+
+export const LogoOld: FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
     <g fill="none">
       <path

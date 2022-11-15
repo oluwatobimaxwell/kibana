@@ -10,9 +10,10 @@ import { EuiLink, EuiSpacer, EuiText, EuiTextColor } from '@elastic/eui';
 import React, { ReactElement } from 'react';
 import { FormattedMessage } from '@kbn/i18n-react';
 import { NoDataPageProps } from '../no_data_page';
-import { KibanaPageTemplateSolutionNavAvatar } from '../../solution_nav';
+// import { KibanaPageTemplateSolutionNavAvatar } from '../../solution_nav';
 import { ActionCards } from '../action_cards';
 import { ElasticAgentCard, NoDataCard } from '../no_data_card';
+import { CSTLogoIcon } from '../../../cst/components/logo';
 
 type NoDataPageBodyProps = {
   actionCards: Array<ReactElement<typeof NoDataCard> | ReactElement<typeof ElasticAgentCard>>;
@@ -24,11 +25,24 @@ export const NoDataPageBody = (props: NoDataPageBodyProps) => {
   return (
     <>
       <EuiText textAlign="center">
-        <KibanaPageTemplateSolutionNavAvatar
+        {/* <KibanaPageTemplateSolutionNavAvatar
           name={solution}
           iconType={logo || `logo${solution}`}
           size="xxl"
-        />
+        /> */}
+        <div className="euiAvatar euiAvatar--xl euiAvatar--user euiAvatar--plain kbnPageTemplateSolutionNavAvatar kbnPageTemplateSolutionNavAvatar--xxl">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <CSTLogoIcon size="medium" />
+          </div>
+        </div>
         <EuiSpacer size="l" />
         <h1>{pageTitle}</h1>
         <EuiTextColor color="subdued">

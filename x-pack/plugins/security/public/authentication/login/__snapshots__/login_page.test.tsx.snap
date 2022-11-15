@@ -332,7 +332,7 @@ exports[`LoginPage page renders as expected 1`] = `
       >
         <h1>
           <FormattedMessage
-            defaultMessage="Welcome to Elastic"
+            defaultMessage="Welcome to CST Analytics"
             id="xpack.security.loginPage.welcomeTitle"
             values={Object {}}
           />

@@ -78,7 +78,7 @@ export const App = ({ http, token }: { http: HttpSetup; token?: string }) => {
         template="empty"
         pageHeader={{
           iconType: 'logoElastic',
-          pageTitle: 'Welcome to Elastic',
+          pageTitle: 'Welcome to CST Analytics',
         }}
       >
         <EuiPanel>
@@ -94,7 +94,7 @@ export const App = ({ http, token }: { http: HttpSetup; token?: string }) => {
       template="empty"
       pageHeader={{
         iconType: 'logoElastic',
-        pageTitle: 'Welcome to Elastic',
+        pageTitle: 'Welcome to CST Analytics',
       }}
     >
       <EuiPanel>

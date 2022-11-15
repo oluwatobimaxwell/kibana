@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import { Subscription } from 'rxjs';
 
 import { HttpStart } from '../../http';
+import { CSTLogoIcon } from '../../cst/components/logo';
 
 export interface LoadingIndicatorProps {
   loadingCount$: ReturnType<HttpStart['getLoadingCount$']>;
@@ -74,15 +75,16 @@ export class LoadingIndicator extends React.Component<LoadingIndicatorProps, { v
         aria-label={ariaLabel}
       />
     ) : (
-      <EuiIcon
-        type="logoElastic"
-        size="l"
-        data-test-subj={testSubj}
-        className="chrHeaderLogo__cluster"
-        aria-label={i18n.translate('core.ui.chrome.headerGlobalNav.logoAriaLabel', {
-          defaultMessage: 'Elastic Logo',
-        })}
-      />
+      // <EuiIcon
+      //   type="logoElastic"
+      //   size="l"
+      //   data-test-subj={testSubj}
+      //   className="chrHeaderLogo__cluster"
+      //   aria-label={i18n.translate('core.ui.chrome.headerGlobalNav.logoAriaLabel', {
+      //     defaultMessage: 'Elastic Logo',
+      //   })}
+      // />
+      <CSTLogoIcon />
     );
 
     return !this.props.showAsBar ? (

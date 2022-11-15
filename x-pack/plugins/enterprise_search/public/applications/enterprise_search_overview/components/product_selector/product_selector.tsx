@@ -166,7 +166,7 @@ export const ProductSelector: React.FC<ProductSelectorProps> = ({
 
         <h1>
           {i18n.translate('xpack.enterpriseSearch.overview.heading', {
-            defaultMessage: 'Welcome to Elastic Enterprise Search',
+            defaultMessage: 'Welcome to CST Analytics Enterprise Search',
           })}
         </h1>
         <p>
