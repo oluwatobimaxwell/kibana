@@ -55,13 +55,6 @@ export const MagnetDataTable: FC<Props> = ({ container, margnetElement, http }) 
     if (pagination?.pageSize !== pageSize) onPageSizeChange(pageSize);
   };
 
-  const selection = {
-    selectable: (item: any) => item?.data?.id,
-    selectableMessage: (selectable: any) => (!selectable ? 'User is currently offline' : undefined),
-    onSelectionChange: (selected: any[]) => setSelectedItems(selected),
-    initialSelected: [],
-  };
-
   const formattedColumns = useMemo(() => {
     const expand = {
       align: CENTER_ALIGNMENT,
@@ -100,7 +93,7 @@ export const MagnetDataTable: FC<Props> = ({ container, margnetElement, http }) 
             maxWidth: 'calc(100% - 10px)',
           }}
           id="magnet-data-artifactId"
-          defaultValue={artifactId}
+          value={artifactId}
           options={[
             { value: '', text: '-- Select Artifact --' },
             ...artifacts.map((name) => ({

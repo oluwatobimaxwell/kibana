@@ -69,30 +69,38 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     setColumns(newColumns);
   };
 
-  const getTableData = useCallback(async () => {
-    if (artifactId && http) {
-      setLoading(true);
-      const data: LooseObject[] = await http.post(`/api/magnet_data/artifact_data`, {
-        body: JSON.stringify(artifactDataQuery.build()),
-      });
-      setData(data);
+  const updateTableData = useCallback((data: LooseObject[]) => {
+    setData(data);
       setPagination((prevPagination: any) => ({
         ...prevPagination,
         totalItemCount: data?.length,
       }));
       setTableColumns(data);
       onPageIndexChange(0);
+  }, []);
+
+  const getTableData = useCallback(async () => {
+    if (artifactId && http) {
+      setLoading(true);
+      const data: LooseObject[] = await http.post(`/api/magnet_data/artifact_data`, {
+        body: JSON.stringify(artifactDataQuery.build()),
+      });
+      updateTableData(data);
       setLoading(false);
     }
-  }, [artifactId, globalQuery, http]);
+  }, [artifactId, globalQuery, http, updateTableData]);
 
   const getArtifacts = useCallback(async () => {
     if (http) {
       setLoading(true);
       const data = await http.post(`/api/magnet_data/artifacts`, {
         body: JSON.stringify(artifactListQuery.build()),
-      });
+      }) as string[];
       setArtifacts(data as string[]);
+      if (data.length  === 1) {
+        setArtifactId(data[0]);
+        getTableData();
+      }
       setLoading(false);
     }
   }, [http]);
@@ -119,13 +127,21 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
 
     const _globalQuery = artifactDataQuery.build();
     if (!isEqual(_globalQuery, globalQuery)) {
+      if (!JSON.stringify(_globalQuery).includes(artifactId)) {
+        setArtifactId('');
+        updateTableData([]);
+      }
       setGlobalQuery(_globalQuery);
     }
   }, [container, globalQuery]);
 
-  const trackClickEvent = useCallback(() => setTimeout(getGlobalQuery, 500), [getGlobalQuery]);
+  const trackClickEvent = useCallback(() => setTimeout(() => {
+    setLoading(true);
+    getGlobalQuery();
+    setLoading(false);
+  }, 1000), [getGlobalQuery]);
 
-  const kbn = document.querySelector('#kibana-body') as HTMLElement;
+  const kbn = document.body as HTMLElement;
 
   useEffect(() => {
     kbn.addEventListener('click', trackClickEvent);
@@ -145,7 +161,8 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
 
   useEffect(() => {
     getArtifacts();
-  }, [globalQuery, getArtifacts]);
+    getTableData();
+  }, [globalQuery, getArtifacts, getTableData]);
 
   const displayedColumns = useMemo(() => columns.filter((col) => !col.hidden), [columns]);
 
