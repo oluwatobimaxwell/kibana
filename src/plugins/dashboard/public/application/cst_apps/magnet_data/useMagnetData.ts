@@ -28,8 +28,10 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     pageIndex: 0,
     pageSize: 10,
     totalItemCount: 0,
-    pageSizeOptions: [10, 20, 50],
+    pageSizeOptions: [10, 20, 50, 100],
   });
+
+  
 
   const setTableColumns = (data: LooseObject[]) => {
     const columns: TableColumnType[] = [];
@@ -62,6 +64,7 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     }));
   };
 
+
   const hideOrShowColumn = (column: TableColumnType) => {
     const newColumns = [...columns];
     const index = newColumns.findIndex((col) => col.name === column.name);
@@ -69,26 +72,37 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     setColumns(newColumns);
   };
 
-  const updateTableData = useCallback((data: LooseObject[]) => {
-    setData(data);
+  const updateTableData = useCallback((data: LooseObject[], total: number) => {
+      setData(data);
       setPagination((prevPagination: any) => ({
         ...prevPagination,
-        totalItemCount: data?.length,
+        totalItemCount: total,
       }));
       setTableColumns(data);
-      onPageIndexChange(0);
   }, []);
 
-  const getTableData = useCallback(async () => {
+  const getTableData = useCallback(async (start = 0, size = 10) => {
     if (artifactId && http) {
       setLoading(true);
-      const data: LooseObject[] = await http.post(`/api/magnet_data/artifact_data`, {
-        body: JSON.stringify(artifactDataQuery.build()),
+      const {
+        data,
+        total
+      }: {
+        data: LooseObject[];
+        total: number;
+      } = await http.post(`/api/magnet_data/artifact_data`, {
+        body: JSON.stringify({
+          query: artifactDataQuery.build(),
+          start,
+          size,
+        }),
       });
-      updateTableData(data);
+      updateTableData(data, total);
       setLoading(false);
     }
   }, [artifactId, globalQuery, http, updateTableData]);
+
+
 
   const getArtifacts = useCallback(async () => {
     if (http) {
@@ -129,7 +143,8 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     if (!isEqual(_globalQuery, globalQuery)) {
       if (!JSON.stringify(_globalQuery).includes(artifactId)) {
         setArtifactId('');
-        updateTableData([]);
+        updateTableData([], 0);
+        onPageIndexChange(0);
       }
       setGlobalQuery(_globalQuery);
     }
@@ -158,6 +173,19 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
       getTableData();
     }
   }, [artifactId, getTableData]);
+
+
+  const { start, size } = useMemo(
+    () => ({
+      start: pagination.pageIndex * pagination.pageSize,
+      size: pagination.pageSize,
+    }),
+    [pagination]
+  );
+
+  useEffect(() => {
+    getTableData(start, size);
+  }, [start, size]);
 
   useEffect(() => {
     getArtifacts();
@@ -191,7 +219,7 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
     columns,
     displayedColumns,
     pagination,
-    displayedData: showPaginationData(displayedData),
+    displayedData: displayedData,
     searchKeyword,
     artifactId,
     onPageIndexChange,

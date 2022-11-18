@@ -36,7 +36,6 @@ export const MagnetDataTable: FC<Props> = ({ container, margnetElement, http }) 
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
 
   const {
-    data,
     artifacts,
     loading,
     displayedColumns,
@@ -118,15 +117,11 @@ export const MagnetDataTable: FC<Props> = ({ container, margnetElement, http }) 
         <EuiBasicTable
           items={displayedData}
           itemId="id"
-          // @ts-ignore everywhere
           columns={formattedColumns}
           responsive={true}
           onChange={onTableChange}
           loading={loading}
           pagination={pagination}
-          // itemIdToExpandedRowMap={itemIdToExpandedRowMap}
-          // isExpandable={true}
-          // hasActions={true}
         />
       )}
       <ViewEnrichedData ref={flyoutView} />

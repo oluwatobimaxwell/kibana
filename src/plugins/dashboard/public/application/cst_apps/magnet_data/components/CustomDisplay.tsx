@@ -10,9 +10,10 @@ type Props = {
 
 const Image = ({ value }: { value: any }) => {
   const resource = value?.includes('http') ? value : `data:image/jpeg;base64,${value}`;
+  if (!value) return null;
   return (
     <a href={resource} target="_blank" rel="noreferrer">
-      <img className="table-image" src={resource} alt="Photo" />
+      <img className="table-image" src={resource} alt="No image" />
     </a>
   );
 };
