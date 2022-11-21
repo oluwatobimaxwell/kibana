@@ -184,13 +184,13 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
   );
 
   useEffect(() => {
+    artifactDataQuery.addArtifactName(artifactId);
     getTableData(start, size);
   }, [start, size]);
 
   useEffect(() => {
     getArtifacts();
-    getTableData();
-  }, [globalQuery, getArtifacts, getTableData]);
+  }, [globalQuery, getArtifacts]);
 
   const displayedColumns = useMemo(() => columns.filter((col) => !col.hidden), [columns]);
 
