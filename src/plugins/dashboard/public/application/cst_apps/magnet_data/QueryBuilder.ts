@@ -1,6 +1,6 @@
 export const timeStampFiled = 'timestamp';
-export const artifactNameFiled = 'case_id';
-// export const artifactNameFiled = 'artifact_name.keyword';
+// export const artifactNameFiled = 'case_id';
+export const artifactNameFiled = 'artifact_name.keyword';
 
 class QueryBuilder {
   query: any;
