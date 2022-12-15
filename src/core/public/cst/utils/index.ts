@@ -1,0 +1,1 @@
+export { versionCode } from "./constants";

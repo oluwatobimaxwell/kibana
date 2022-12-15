@@ -6,9 +6,12 @@
  * Side Public License, v 1.
  */
 import React from 'react';
+import { versionCode } from '../utils';
 
 export const CSTLogoName = () => {
   return (
-    <p style={{ color: '#fff', marginLeft: 8, fontWeight: 'bold', fontSize: 18 }}>CST Analytics</p>
+    <p style={{ color: '#fff', marginLeft: 8, fontWeight: 'bold', fontSize: 18 }}>
+      CST Analytics ({versionCode})
+    </p>
   );
 };
