@@ -47,6 +47,7 @@ import { HeaderNavControls } from './header_nav_controls';
 import { HeaderActionMenu } from './header_action_menu';
 import { HeaderExtension } from './header_extension';
 import { HeaderTopBanner } from './header_top_banner';
+import CSTTheme from '../../../cst/theme/CSTTheme';
 
 export interface HeaderProps {
   kibanaVersion: string;
@@ -71,9 +72,11 @@ export interface HeaderProps {
   isLocked$: Observable<boolean>;
   loadingCount$: ReturnType<HttpStart['getLoadingCount$']>;
   onIsLockedUpdate: OnIsLockedUpdate;
+  http: HttpStart;
 }
 
 export function Header({
+  http,
   kibanaVersion,
   kibanaDocLink,
   application,
@@ -93,6 +96,7 @@ export function Header({
       <>
         <LoadingIndicator loadingCount$={observables.loadingCount$} showAsBar />
         <HeaderTopBanner headerBanner$={observables.headerBanner$} />
+        <CSTTheme http={http} />
       </>
     );
   }
@@ -214,7 +218,6 @@ export function Header({
             )}
 
             <HeaderBadge badge$={observables.badge$} />
-
             <EuiHeaderSection side="right">
               <EuiHeaderSectionItem border="none">
                 <HeaderActionMenu actionMenu$={application.currentActionMenu$} />
@@ -223,6 +226,7 @@ export function Header({
           </EuiHeader>
         </div>
       </header>
+      <CSTTheme http={http} />
     </>
   );
 }
