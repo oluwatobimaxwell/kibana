@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import useObservable from 'react-use/lib/useObservable';
 import classNames from 'classnames';
 import { APP_WRAPPER_CLASS } from '../../utils';
+import CSTTheme from '../cst/theme/CSTTheme';
 
 export const AppWrapper: React.FunctionComponent<{
   chromeVisible$: Observable<boolean>;
@@ -19,6 +20,7 @@ export const AppWrapper: React.FunctionComponent<{
   return (
     <div className={classNames(APP_WRAPPER_CLASS, { 'kbnAppWrapper--hiddenChrome': !visible })}>
       {children}
+      <CSTTheme />
     </div>
   );
 };

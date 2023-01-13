@@ -8,6 +8,7 @@ const getSettings = async (http: HttpStart) => {
 
 const CSTTheme: FC<{ http: HttpStart }> = ({ http }) => {
   const { data } = useQuery(['settings'], () => getSettings(http), {
+    enabled: !!http,
     onSuccess: (data) => {
         // save data to local storage
         localStorage.setItem('cst-theme-settings', JSON.stringify(data));
@@ -18,7 +19,8 @@ const CSTTheme: FC<{ http: HttpStart }> = ({ http }) => {
         };
     },
   });
-  const style = data as unknown as any;
+  const dataLocal = JSON.parse(localStorage.getItem('cst-theme-settings') || '{}');
+  const style = data || dataLocal as unknown as any;
   return (
     <style>
       {`
