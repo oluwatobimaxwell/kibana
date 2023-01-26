@@ -194,13 +194,6 @@ export const useMagnetData = (container: any, query: any, http: HttpSetup) => {
 
   const displayedColumns = useMemo(() => columns.filter((col) => !col.hidden), [columns]);
 
-  const showPaginationData = (data: LooseObject[]) => {
-    const { pageIndex, pageSize } = pagination;
-    const start = pageIndex * pageSize;
-    const end = start + pageSize;
-    return data.slice(start, end);
-  };
-
   const displayedData = useMemo(() => {
     if (searchKeyword) {
       return data.filter((item) => {

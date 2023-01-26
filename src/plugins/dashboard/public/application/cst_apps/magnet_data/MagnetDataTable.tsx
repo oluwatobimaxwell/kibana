@@ -6,22 +6,18 @@
  * Side Public License, v 1.
  */
 
-import React, { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ChangeEvent, FC, useMemo, useRef } from 'react';
 import {
   CENTER_ALIGNMENT,
   EuiBasicTable,
   EuiButtonIcon,
   EuiFieldSearch,
   EuiLoadingChart,
-  EuiScreenReaderOnly,
   EuiSelect,
-  RIGHT_ALIGNMENT,
 } from '@elastic/eui';
 import { HttpSetup } from 'kibana/public';
-import { ExpandObjectProps } from './types';
 import { useMagnetData } from './useMagnetData';
 import './index.scss';
-import SingleDocumentView from './components/SingleDocumentView';
 import ViewEnrichedData from './components/ViewEnrichedData';
 import CustomDisplay from './components/CustomDisplay';
 
@@ -33,8 +29,6 @@ interface Props {
 
 export const MagnetDataTable: FC<Props> = ({ container, margnetElement, http }) => {
   const flyoutView = useRef<{ open: (T: any) => void }>(null);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
-
   const {
     artifacts,
     loading,

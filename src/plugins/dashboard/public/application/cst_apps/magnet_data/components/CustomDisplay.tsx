@@ -3,7 +3,7 @@ import React, { FC, useMemo } from 'react';
 import { LooseObject } from '../types';
 
 type Props = {
-  data: LooseObject;
+  data?: LooseObject;
   value: any;
   type: string;
 };

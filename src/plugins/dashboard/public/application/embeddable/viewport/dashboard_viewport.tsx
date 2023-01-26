@@ -147,7 +147,7 @@ export class DashboardViewport extends React.Component<DashboardViewportProps, S
             </div>
           )}
           {this.state.controlGroupReady && <DashboardGrid container={container} />}
-          {/* CST Custom Dashboard Element for Magnet Data */}
+          {/* Register custom dashboard elements here */}
           <MagnetDataDashboard
             {...this.props}
             isReadonlyMode={
