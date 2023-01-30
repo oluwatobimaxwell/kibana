@@ -1,4 +1,4 @@
-const timeStampFiled = '@timestamp';
+const timeStampFiled = 'timestamp';
 
 export const getQuery = (
   fields: string[],
