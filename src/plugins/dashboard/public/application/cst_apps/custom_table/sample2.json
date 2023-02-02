@@ -1,0 +1,13 @@
+{
+  "start": 0,
+  "size": 10,
+  "indexName": "cases",
+  "query": {
+    "_source": {
+      "includes": ["case_id", "calling_number", "calling_address", "case_id", "gloria"]
+    },
+    "query": {
+      "bool": { "filter": [{ "bool": { "must": [] } }, { "range": { "timestamp": {} } }] }
+    }
+  }
+}

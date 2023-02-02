@@ -25,6 +25,7 @@ export const useGlobalData = (container: any, tableFields: any) => {
   useEffect(() => {
     kbn.addEventListener('click', trackClickEvent);
     kbn.addEventListener('keydown', trackClickEvent);
+    kbn.click();
     return () => {
       kbn.removeEventListener('click', trackClickEvent);
       kbn.removeEventListener('keydown', trackClickEvent);

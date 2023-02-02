@@ -6,11 +6,7 @@ export const getQuery = (
   filters: any[],
   queryString: any
 ) => {
-  const fieldsQuery = fields.map((field) => ({
-    exists: {
-      field,
-    },
-  }));
+
 
   const filtersQuery = filters.map(({ query }) => query);
 
@@ -25,12 +21,15 @@ export const getQuery = (
     : [];
 
   const query = {
+    _source: {
+      includes: fields,
+    },
     query: {
       bool: {
         filter: [
           {
             bool: {
-              must: [...fieldsQuery, ...filtersQuery, ...queryStringQuery],
+              must: [...filtersQuery, ...queryStringQuery],
             },
           },
           {

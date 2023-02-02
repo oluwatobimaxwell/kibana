@@ -30,7 +30,6 @@ export const MagnetDataDashboard: FC<Props> = ({ container, http }) => {
     let elements: any[] = [];
     const panels = container?.getInput()?.panels || {};
     Object.values(panels).forEach((child: any) => {
-      // remove the brackets from the name
       const name = getAppName(child?.explicitInput?.savedVis?.params?.markdown);
       if (appNames.includes(name)) {
         elements.push(child);
@@ -58,7 +57,6 @@ export const MagnetDataDashboard: FC<Props> = ({ container, http }) => {
   useEffect(() => {
     try {
       const interval = setInterval(() => {
-        console.log('margnetElements', margnetElements.length);
         margnetElements.forEach((margnetElement) => {
           const panelId = margnetElement?.explicitInput?.id;
           const name = getAppName(margnetElement?.explicitInput?.savedVis?.params?.markdown);

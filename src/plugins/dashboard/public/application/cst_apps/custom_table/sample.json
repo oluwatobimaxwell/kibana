@@ -1,0 +1,26 @@
+{
+  "start": 0,
+  "size": 10,
+  "indexName": "cases",
+  "query": {
+    "_source": {
+      "includes": ["case_id", "calling_number", "calling_address", "case_id", "gloria"]
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [
+                { "match_phrase": { "case_id": "CASE008" } },
+                { "exists": { "field": "call_date" } },
+                { "query_string": { "query": "call_date : *  and call_date_str : * " } }
+              ]
+            }
+          },
+          { "range": { "timestamp": { "gte": "now-15M", "lte": "now" } } }
+        ]
+      }
+    }
+  }
+}

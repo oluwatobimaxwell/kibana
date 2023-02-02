@@ -1,8 +1,8 @@
 import React, { FC, useMemo, useState } from 'react';
 import { HttpSetup } from 'kibana/public';
-import { EuiBasicTable, EuiBasicTableColumn, EuiTableSortingType } from '@elastic/eui';
+import { EuiBasicTable, EuiLoadingChart, EuiTableSortingType } from '@elastic/eui';
 import { useSearchDocuments } from './hooks/queries';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { formatColumnName } from './utils/formatColumnName';
 import RenderCell from './components/RenderCell';
 import { DashboardContainer } from '../../embeddable';
@@ -17,6 +17,16 @@ interface Props {
 
 const CustomTable: FC<Props> = ({ container, margnetElement, http }) => {
   const tableFields = getFields(margnetElement?.explicitInput?.savedVis?.params?.markdown);
+
+  const { isLoading: preLoading } = useQuery(
+    'preLoading',
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true);
+        }, 3000);
+      })
+  );
 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -85,17 +95,24 @@ const CustomTable: FC<Props> = ({ container, margnetElement, http }) => {
   }
 
   return (
-    <div>
-      <EuiBasicTable
-        items={tableData}
-        itemId="id"
-        columns={columns as any[]}
-        responsive={true}
-        onChange={onTableChange}
-        loading={isLoading}
-        pagination={pagination}
-        sorting={sorting}
-      />
+    <div className="cst-magnet-data">
+      {preLoading ? (
+        <div className=" loading">
+          <EuiLoadingChart size="l" />
+          <p>Loading...</p>
+        </div>
+      ) : (
+        <EuiBasicTable
+          items={tableData}
+          itemId="id"
+          columns={columns as any[]}
+          responsive={true}
+          onChange={onTableChange}
+          loading={isLoading}
+          pagination={pagination}
+          sorting={sorting}
+        />
+      )}
     </div>
   );
 };
