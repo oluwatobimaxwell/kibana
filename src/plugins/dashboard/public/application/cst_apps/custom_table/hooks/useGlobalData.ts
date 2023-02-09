@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getQuery } from './get_query';
 
-export const useGlobalData = (container: any, tableFields: any) => {
+export const useGlobalData = (container: any, markDown: any) => {
   const kbn = document.body as HTMLElement;
   const [timeRange, setTimeRange] = useState<any>({});
   const [filters, setFilters] = useState<any>([]);
@@ -32,6 +32,5 @@ export const useGlobalData = (container: any, tableFields: any) => {
     };
   }, [kbn, trackClickEvent]);
 
-  const tableColumns = tableFields.map((field: any) => field.name).filter(Boolean);
-  return { query: getQuery(tableColumns, timeRange, filters, query) };
+  return getQuery(markDown, timeRange, filters, query);
 };

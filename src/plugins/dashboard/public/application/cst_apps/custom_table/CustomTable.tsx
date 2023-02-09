@@ -16,7 +16,8 @@ interface Props {
 }
 
 const CustomTable: FC<Props> = ({ container, margnetElement, http }) => {
-  const tableFields = getFields(margnetElement?.explicitInput?.savedVis?.params?.markdown);
+
+
 
   const { isLoading: preLoading } = useQuery(
     'preLoading',
@@ -32,8 +33,9 @@ const CustomTable: FC<Props> = ({ container, margnetElement, http }) => {
   const [pageSize, setPageSize] = useState(10);
   const [sortField, setSortField] = useState('case_id');
   const [sortDirection, setSortDirection] = useState('asc');
-
-  const { query } = useGlobalData(container, tableFields);
+    
+  const markDown = margnetElement?.explicitInput?.savedVis?.params?.markdown;
+  const { query, fields } = useGlobalData(container, markDown);
 
   const { data, isLoading, error } = useSearchDocuments(http, {
     start: pageIndex * pageSize,
@@ -45,7 +47,7 @@ const CustomTable: FC<Props> = ({ container, margnetElement, http }) => {
   const tableData = (data?.data || []).map((item: any) => item._source);
 
   const columns = useMemo(() => {
-    return tableFields.map((field) => {
+    return fields.map((field) => {
       return {
         field,
         name: formatColumnName(field.name),
@@ -55,7 +57,7 @@ const CustomTable: FC<Props> = ({ container, margnetElement, http }) => {
         },
       };
     });
-  }, [tableFields]);
+  }, [fields]);
 
   const pagination = {
     pageIndex: pageIndex,

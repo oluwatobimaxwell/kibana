@@ -5,10 +5,10 @@ const RenderCell: FC<{
   value: any;
   type: string;
 }> = ({ value, type }) => {
-  if (type !== 'string') {
+  if (type && type !== 'string') {
     return <CustomDisplay type={type} value={value} />;
   }
-  return <div>{value}</div>;
+  return <div>{value || '(missing value)'}</div>;
 };
 
 export default RenderCell;

@@ -1,13 +1,29 @@
+import { getFields, getTableFilters } from '../utils/formatStringToApp';
+
 const timeStampFiled = 'timestamp';
 
+export type ColumnItem = {
+  name: string;
+  type: string;
+  required: boolean;
+};
+
 export const getQuery = (
-  fields: string[],
+  markDown: any,
   timeRange: { from: string; to: string },
   filters: any[],
   queryString: any
 ) => {
-
-
+  const fields = getFields(markDown);
+  const tableFilters = getTableFilters(markDown);
+  const fieldNames = fields.map((field) => field.name).filter(Boolean);
+  const mustFields = fields
+    .filter((field) => field.required)
+    .map((field) => ({
+      exists: {
+        field: field.name,
+      },
+    }));
   const filtersQuery = filters.map(({ query }) => query);
 
   const queryStringQuery = queryString?.query
@@ -22,14 +38,19 @@ export const getQuery = (
 
   const query = {
     _source: {
-      includes: fields,
+      includes: fieldNames,
     },
     query: {
       bool: {
         filter: [
           {
             bool: {
-              must: [...filtersQuery, ...queryStringQuery],
+              must: [
+                ...mustFields, 
+                ...filtersQuery, 
+                ...queryStringQuery, 
+                ...tableFilters
+              ],
             },
           },
           {
@@ -44,5 +65,8 @@ export const getQuery = (
       },
     },
   };
-  return query;
+  return {
+    query,
+    fields,
+  };
 };

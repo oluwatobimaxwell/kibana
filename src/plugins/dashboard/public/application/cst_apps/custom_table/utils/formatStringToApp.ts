@@ -6,6 +6,7 @@ export const formatStringToTableApp = (
   table?: {
     app: string;
     fields: string[];
+    filters?: any[];
   };
 } => {
   try {
@@ -35,7 +36,6 @@ export const formatStringToTableApp = (
 
 export const getAppName = (markdown: string): string => {
   const toAppName = formatStringToTableApp(markdown);
-  console.log('toAppName', toAppName);
   if (toAppName?.valid) {
     return toAppName?.table?.app || '';
   }
@@ -47,6 +47,7 @@ export const getFields = (
 ): {
   name: string;
   type: string;
+  required: boolean;
 }[] => {
   const toAppName = formatStringToTableApp(markdown);
   if (toAppName?.valid) {
@@ -55,10 +56,23 @@ export const getFields = (
         return {
           name: field,
           type: 'string',
+          required: true,
         };
       }
       return field;
     });
+  }
+  return [];
+};
+
+export const getTableFilters = (markdown: string): any[] => {
+  const toAppName = formatStringToTableApp(markdown);
+  if (toAppName?.valid) {
+    return (toAppName?.table?.filters || []).map((filter) => ({
+      term: {
+        [filter.field]: filter.value,
+      },
+    }));
   }
   return [];
 };
