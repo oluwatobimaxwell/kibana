@@ -37,6 +37,7 @@ export const getQuery = (
     : [];
 
   const query = {
+    track_total_hits: true,
     _source: {
       includes: fieldNames,
     },
