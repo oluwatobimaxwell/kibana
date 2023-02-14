@@ -9,6 +9,6 @@ import React from 'react';
 
 export const CSTLogoName = () => {
   return (
-    <p style={{ color: '#fff', marginLeft: 8, fontWeight: 'bold', fontSize: 18 }}>CST Analytics</p>
+    <p style={{ color: '#fff', marginLeft: 8, fontWeight: 'bold', fontSize: 18 }}>Agency Analytics</p>
   );
 };

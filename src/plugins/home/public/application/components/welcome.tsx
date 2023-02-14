@@ -76,7 +76,7 @@ export class Welcome extends React.Component<Props> {
               </span>
               <EuiTitle size="l" className="homWelcome__title">
                 <h1>
-                  <FormattedMessage id="home.welcomeTitle" defaultMessage="Welcome to CST Analytics" />
+                  <FormattedMessage id="home.welcomeTitle" defaultMessage="Welcome to Agency Analytics" />
                 </h1>
               </EuiTitle>
               <EuiSpacer size="m" />

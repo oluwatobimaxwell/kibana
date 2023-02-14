@@ -106,7 +106,7 @@ export const NoDataPage: FunctionComponent<NoDataPageProps> = ({
   const title =
     pageTitle ||
     i18n.translate('kibana-react.noDataPage.welcomeTitle', {
-      defaultMessage: 'Welcome to CST Analytics {solution}!',
+      defaultMessage: 'Welcome to Agency Analytics {solution}!',
       values: { solution },
     });
 

@@ -11,7 +11,7 @@ import { versionCode } from '../utils';
 export const CSTLogoName = () => {
   return (
     <p style={{ color: '#fff', marginLeft: 8, fontWeight: 'bold', fontSize: 18 }}>
-      CST Analytics ({versionCode})
+      Agency Analytics ({versionCode})
     </p>
   );
 };
