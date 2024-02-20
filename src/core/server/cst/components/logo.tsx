@@ -23,7 +23,7 @@ export const CSTLogoIcon: React.FC<Props> = ({ size = 'small' }) => {
 
   return (
     <img
-      src="https://evoke-storage-system.fra1.cdn.digitaloceanspaces.com/samples/Coat_of_arms_of_Nigeria.svg"
+      src="https://res.cloudinary.com/dzghxcq0j/image/upload/v1708402318/cst/cst-logo.svg"
       style={{ width: logoSize, height: logoSize, margin: 'auto' }}
     />
   );

@@ -19,7 +19,7 @@ xpack.encryptedSavedObjects.encryptionKey: D12GTfrlfxSPxPlGRBlgPB5qM5GOPDV5
 xpack.reporting.encryptionKey: RSCueeHKzrqzOVTJhkjt17EMnzM96LlN
 
 ## X-Pack security credentials
-elasticsearch.serviceAccountToken: "AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6d0xZaE1tUHpUbEMwbUVUQTVpM1Vmdw"
+elasticsearch.serviceAccountToken: "AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6ZzdJbTJURDBSckduUDJuWEwzem1mQQ"
 elasticsearch.ssl.certificateAuthorities: [ "/Users/oluwatobisholanke/Desktop/cst/kibana/secrets/certs/ca/ca.crt" ]
 
 # =====================================================
